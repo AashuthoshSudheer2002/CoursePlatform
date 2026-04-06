@@ -12,9 +12,8 @@ class PublishStatus(models.TextChoices):
 class Course(models.Model):
     title = models.CharField(max_length=120)
     description = models.TextField(blank=True, null=True)
-    # uuid = models.UUIDField(default=uuid.uuid1, unique=True)
+    image = models.ImageField(upload_to='course_images/', blank=True, null=True)
     public_id = models.CharField(max_length=130, blank=True, null=True, db_index=True)
-    # image = models.ImageField(upload_to=handle_upload, blank=True, null=True)
     access = models.CharField(
         max_length=5, 
         choices=AccessRequirement.choices,
