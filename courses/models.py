@@ -35,3 +35,39 @@ class Course(models.Model):
     @property
     def is_published(self):
         return self.status == PublishStatus.PUBLISHED
+
+    @property
+    def admin_image(self):
+        if not self.image:
+            return ""
+        image_options = {
+            "width": 150,
+            "height": 150,
+        }
+        return self.image.build_url(**image_options)
+    
+    
+    def retrieve_image_thumbnail(self , as_html=False):
+        if not self.image:
+            return ""
+        image_options = {
+            "width": 150,
+            "height": 150,
+        }
+        if as_html:
+            #CloudinaryImage(self.image.public_id).image(**image_options) --- IGNORE ---
+            return self.image.image(**image_options)
+        url = self.image.build_url(**image_options)
+        return url
+class Lesson(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons')
+    title = models.CharField(max_length=120)
+    description = models.TextField(blank=True, null=True)
+    video_url = models.URLField(blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    status = models.CharField(
+        max_length=10, 
+        choices=PublishStatus.choices,
+        default=PublishStatus.PUBLISHED
+        )
