@@ -1,7 +1,8 @@
 from django.db import models
 from cloudinary.models import CloudinaryField
+from django.utils.text import slugify
 from helpers.Cloudinary import _cloudinary
-
+import uuid
 _cloudinary.cloudinary_init()
 
 
@@ -14,10 +15,28 @@ class PublishStatus(models.TextChoices):
     COMING_SOON = "soon", "Coming Soon"
     DRAFT = "draft", "Draft"
 
+def get_public_id_prefix(instance ,*args, **kwargs):
+    print(args,kwargs)
+    title = instance.title
+    if title:
+        slug = slugify(title)
+        unique_id = uuid.uuid4().hex[:6]
+        return f"courses/{slug}"
+    
+    if instance.id:
+        return f"courses/{instance.id}"
+    return "courses"
+
+def get_display_name(instance , *args , **kwargs):
+    title = instance.title
+    if title:
+        return title
+    return f"Course {instance.id}"
+
 class Course(models.Model):
     title = models.CharField(max_length=120)
     description = models.TextField(blank=True, null=True)
-    image = CloudinaryField('image', blank=True, null=True)
+    image = CloudinaryField('image', blank=True, null=True,public_id_prefix=get_public_id_prefix,display_name=get_display_name,tags=["course","thumbnail"])
     public_id = models.CharField(max_length=130, blank=True, null=True, db_index=True)
     access = models.CharField(
         max_length=5, 
