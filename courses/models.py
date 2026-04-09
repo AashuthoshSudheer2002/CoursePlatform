@@ -65,9 +65,14 @@ class Lesson(models.Model):
     description = models.TextField(blank=True, null=True)
     video_url = models.URLField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    order = models.PositiveIntegerField(default=0)
+    thumbnail = CloudinaryField('thumbnail', blank=True, null=True)
+    video = CloudinaryField('video', blank=True, null=True,resource_type='video')
     updated = models.DateTimeField(auto_now=True)
     status = models.CharField(
         max_length=10, 
         choices=PublishStatus.choices,
         default=PublishStatus.PUBLISHED
         )
+    class Meta:
+        ordering = ['order','timestamp']
