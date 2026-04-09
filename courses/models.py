@@ -1,4 +1,9 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
+from helpers.Cloudinary import _cloudinary
+
+_cloudinary.cloudinary_init()
+
 
 class AccessRequirement(models.TextChoices):
     ANYONE = "any", "Anyone"
@@ -12,7 +17,7 @@ class PublishStatus(models.TextChoices):
 class Course(models.Model):
     title = models.CharField(max_length=120)
     description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to='course_images/', blank=True, null=True)
+    image = CloudinaryField('image', blank=True, null=True)
     public_id = models.CharField(max_length=130, blank=True, null=True, db_index=True)
     access = models.CharField(
         max_length=5, 
